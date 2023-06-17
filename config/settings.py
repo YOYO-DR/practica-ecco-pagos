@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'storages',
     # mis apps
     'apps.category',
-    'apps.accounts'
+    'apps.accounts',
+    'apps.store'
 ]
 
 MIDDLEWARE = [
