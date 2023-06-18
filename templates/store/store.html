@@ -177,19 +177,48 @@
         <!-- row end.// -->
 
         <nav class="mt-4" aria-label="Page navigation sample">
+
+          {% if products.has_other_pages %}
+          {% comment %} Para preguntarle si hay datos para paginar, si tengo 11 registros y lo pagino de a 11, no mostrara esto {% endcomment %}
           <ul class="pagination">
-            <li class="page-item disabled">
-              <a class="page-link" href="#">Anterior</a>
+            
+            <li class="page-item 
+            {% comment %} Pregunto si se puede volver a una pagina, por ejemplo si esta en la 2, puede volver a la 1, y si esta en la uno, no se puede volver, entonces le pongo disabled {% endcomment %}
+            {% if not products.has_previous %}
+              disabled
+            {% endif %}
+            ">
+            <a class="page-link" href=
+            {% comment %} Le pogno el valor de la pagina anterior solo si hay alguno {% endcomment %}
+            {% if products.has_previous %}
+              "?page={{products.previous_page_number}}"{% endif %}
+            >Anterior</a>
             </li>
-            <li class="page-item active">
-              <a class="page-link" href="#">1</a>
+            {% for i in products.paginator.page_range %}
+            <li class="page-item 
+            {% if products.number == i %}
+            active
+            {% endif %}
+            ">
+              <a class="page-link" href="?page={{i}}">{{i}}</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#">Siguiente</a>
+            {% endfor %}
+            <li class="page-item
+            {% if not products.has_next %}
+            disabled
+            {% endif %}
+            ">
+            <a class="page-link" href=
+          {% comment %} Lo mismo que el "Anterior", solo preguntando si hay una pagina siguiente {% endcomment %}
+              {% if products.has_next %}
+                "?page={{products.next_page_number}}"
+              {% endif %}
+            >Siguiente</a>
             </li>
           </ul>
+          {% endif %}
+
+
         </nav>
       </main>
       <!-- col.// -->
