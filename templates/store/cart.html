@@ -1,10 +1,15 @@
-{% extends 'base.html' %} 
-{% load static %} 
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 <section class="section-content padding-y bg">
   <div class="container">
     <!-- ============================ COMPONENT 1 ================================= -->
+    {% if not cart_items %}
+    <h2 class="text-center">El carrito de compras esta vacio</h2>
+    <br />
+    <div class="text-center">
+      <a href="{% url 'store' %}" class="btn btn-primary">Continua comprando</a>
+    </div>
 
+    {% else %}
     <div class="row">
       <aside class="col-lg-9">
         <div class="card">
@@ -23,10 +28,13 @@
                 <td>
                   <figure class="itemside align-items-center">
                     <div class="aside">
-                      <img src="{{cart_item.product.images.url}}" class="img-sm" />
+                      <img
+                        src="{{cart_item.product.images.url}}"
+                        class="img-sm"
+                      />
                     </div>
                     <figcaption class="info">
-                      <a href="#" class="title text-dark"
+                      <a href="{{cart_item.product.get_url}}" class="title text-dark"
                         >{{cart_item.product.product_name}}</a
                       >
                       <p class="text-muted small">
@@ -42,23 +50,28 @@
                     <div class="input-group input-spinner">
                       <div class="input-group-prepend">
                         <a
-                        href="{% url 'remove_cart' cart_item.product.id %}"
+                          href="{% url 'remove_cart' cart_item.product.id %}"
                           class="btn btn-light"
                           type="button"
                           id="button-minus"
                         >
                           <i class="bi bi-dash-lg"></i>
-                      </a>
+                        </a>
                       </div>
-                      <input type="text" class="form-control" value="{{cart_item.quantity}}" />
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="{{cart_item.quantity}}"
+                      />
                       <div class="input-group-append">
-                        <a href="{% url 'add_cart' cart_item.product.id %}"
+                        <a
+                          href="{% url 'add_cart' cart_item.product.id %}"
                           class="btn btn-light"
                           type="button"
                           id="button-plus"
                         >
                           <i class="bi bi-plus-lg"></i>
-                      </a>
+                        </a>
                       </div>
                     </div>
                     <!-- input-group.// -->
@@ -68,12 +81,19 @@
                 <td>
                   <div class="price-wrap">
                     <var class="price">${{cart_item.sub_total}}</var>
-                    <small class="text-muted"> ${{cart_item.product.price}} cada uno </small>
+                    <small class="text-muted">
+                      ${{cart_item.product.price}} cada uno
+                    </small>
                   </div>
                   <!-- price-wrap .// -->
                 </td>
                 <td class="text-right">
-                  <a href="{% url 'remove_cart_item' cart_item.product.id %}" class="btn btn-danger"> Eliminar</a>
+                  <a
+                    href="{% url 'remove_cart_item' cart_item.product.id %}"
+                    class="btn btn-danger"
+                  >
+                    Eliminar</a
+                  >
                 </td>
               </tr>
               {% endfor %}
@@ -96,7 +116,9 @@
             </dl>
             <dl class="dlist-align">
               <dt>Total:</dt>
-              <dd class="text-right text-dark b"><strong>${{grand_total}}</strong></dd>
+              <dd class="text-right text-dark b">
+                <strong>${{grand_total}}</strong>
+              </dd>
             </dl>
             <hr />
             <p class="text-center mb-3">
@@ -118,6 +140,7 @@
       </aside>
       <!-- col.// -->
     </div>
+    {% endif %}
     <!-- row.// -->
     <!-- ============================ COMPONENT 1 END .// ================================= -->
   </div>
