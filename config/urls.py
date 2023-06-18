@@ -23,5 +23,6 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',HomeView.as_view(), name='home'),
-    path('store/',include('apps.store.urls'))
+    path('store/',include('apps.store.urls')),
+    path('cart/',include('apps.carts.urls')),
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

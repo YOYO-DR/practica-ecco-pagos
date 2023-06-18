@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     # mis apps
     'apps.category',
     'apps.accounts',
-    'apps.store'
+    'apps.store',
+    'apps.carts'
 ]
 
 MIDDLEWARE = [
