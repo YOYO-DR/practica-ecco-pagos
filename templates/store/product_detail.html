@@ -14,7 +14,8 @@
           <!-- gallery-wrap .end// -->
         </aside>
         <main class="col-md-6 border-left">
-          <form action="{% url 'add_cart' single_product.id %}" method="get">
+          <form action="{% url 'add_cart' single_product.id %}" method="post">
+            {% csrf_token %}
             <article class="content-body">
               <h2 class="title">{{single_product.product_name}}</h2>
 
@@ -31,7 +32,7 @@
                   <h6>Seleccionar Color</h6>
                   <select name="color" class="form-control" required>
                     <option value="" disabled selected>Seleccione</option>
-                    
+
                   {% comment %} El variation es el nombre del modelo el cual tiene la foreignkey hacia el producto, y lo llamo agregandole el _set, y asi obtengo todos los variants relacionados con el producto en particular, y como le creamos un manager (en la variable objects) a los variants con las funciones colors y tallas para retornar los variantes segun esas funciones e imprimirlos, son valores del modelo variants {% endcomment %}
 
                     {% for i in single_product.variation_set.colors %}

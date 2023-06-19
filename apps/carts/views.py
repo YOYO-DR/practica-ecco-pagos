@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, View
 from .models import Cart, CartItem
-from apps.store.models import Product
+from apps.store.models import Product, Variation
 # Create your views here.
 
 def _cart_id(request): # para generar el codigo del carrito con la key de la sesion del usuario
@@ -11,16 +11,31 @@ def _cart_id(request): # para generar el codigo del carrito con la key de la ses
     return cart
 
 # esta vista es para crear el cartItem
-class AddCart(View):
-    def get(self, request, *args, **kwargs):
+def addCart(request,product_id):
       # obtengo el producto
-      product = Product.objects.get(id=self.kwargs.get('product_id'))
-      
+      product = Product.objects.get(id=product_id)
+      product_variation = []
+      if request.method=='POST':
+        for item in request.POST:
+          if item=='csrfmiddlewaretoken':
+            continue
+          key = item
+          value = request.POST[key]
+          variation=Variation.objects.get(product=product,variation_category__iexact=key,variation_value__iexact=value)
+
+          product_variation.append(variation)
       # creo u obtengo el carrito del usuario, si si se crea, utiliza la funcion de cart_id, y tiene un "_" al inicio pq sera una funcion solo para este archivo
       cart,creado = Cart.objects.get_or_create(cart_id=_cart_id(request))
 
       # creo u obtengo el cart_item, le paso el producto, el carrito y el quantity en 1 por si se crea
       cart_item,creado = CartItem.objects.get_or_create(product=product,cart=cart)
+      
+      if len(product_variation)>0:
+          #limpie los valores que tenga el cart_item
+          cart_item.variations.clear()
+          for item in product_variation:
+              # como es de muchos a muchos, y puede recibir varios valores, se lo agrego asi, llamo al atributo que lo relaciona y con la funcion add le paso el item o variation
+              cart_item.variations.add(item) 
 
       #si no se crea, osea, se obtiene, le sumo 1 al quantity y lo guardo
       if not creado:

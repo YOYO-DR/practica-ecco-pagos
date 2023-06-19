@@ -38,8 +38,11 @@
                         >{{cart_item.product.product_name}}</a
                       >
                       <p class="text-muted small">
-                        Matrix: 25 Mpx <br />
-                        Marca: Canon
+                        {% if cart_item.variations.all %}
+                        {% for item in cart_item.variations.all %}
+                        {{item.variation_category|capfirst}} : {{item.variation_value|capfirst}} <br>
+                        {% endfor %}
+                        {% endif %}
                       </p>
                     </figcaption>
                   </figure>
