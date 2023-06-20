@@ -1,7 +1,8 @@
 from django.shortcuts import redirect, render
 from .models import Account
 from apps.accounts.forms import RegistrationForm
-from django.contrib import messages
+from django.contrib import messages,auth
+from django.contrib.auth.decorators import login_required
 
 
 def register(request):
@@ -26,7 +27,20 @@ def register(request):
     return render(request,'account/register.html',context)
 
 def login(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = auth.authenticate(email=email, password=password)
+        if user is not None:
+            auth.login(request,user)
+            return redirect('home')
+        else:
+            messages.error(request,'Las credenciales son incorrectas')
     return render(request,'account/login.html')
 
+@login_required(login_url='login')
 def logout(request):
-    return
+    auth.logout(request)
+    messages.success(request,'Has salido de sesión')
+    return redirect('login')
