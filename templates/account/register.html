@@ -4,6 +4,7 @@
   <!-- ============================ COMPONENT REGISTER   ================================= -->
   <div class="card mx-auto" style="max-width: 520px; margin-top: 40px">
     <article class="card-body">
+      {% include 'includes/alerts.html' %}
       <header class="mb-4">
         <h4 class="card-title">Registro de Usuario</h4>
       </header>
@@ -56,6 +57,8 @@
             Registrar
           </button>
         </div>
+        {{form.email.errors}}
+        {{form.non_field_error}}
         <!-- form-group// -->
       </form>
     </article>
