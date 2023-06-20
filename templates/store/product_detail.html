@@ -58,22 +58,12 @@
               <hr />
               {% if single_product.stock <= 0 %}
               <h5>Producto fuera de stock</h5>
-              {% else %} {% if request.user.is_authenticated %} {% if in_cart %}
-              <a href="#" class="btn btn-success">
-                <span class="text">Producto agregado al carrito</span>
-                <i class="bi bi-cart"></i>
-              </a>
-              <a href="{% url 'cart' %}" class="btn btn-outline-primary">
-                <span class="text">Ver carrito de compras</span>
-                <i class="bi bi-eye-fill"></i>
-              </a>
-              {% else %}
+              {% else %} {% if request.user.is_authenticated %} 
               <button type="submit" class="btn btn-primary">
                 <span class="text">Agregar al shopping cart</span>
                 <i class="bi bi-check"></i>
               </button>
-
-              {% endif %} {% endif %} {% endif %}
+               {% endif %} {% endif %}
             </article>
           </form>
 

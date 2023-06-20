@@ -14,6 +14,8 @@ def _cart_id(request): # para generar el codigo del carrito con la key de la ses
 def addCart(request,product_id):
       # obtengo el producto
       product = Product.objects.get(id=product_id)
+
+      # para obtener las variantes del cartitem
       product_variation = []
       if request.method=='POST':
         for item in request.POST:
@@ -23,24 +25,65 @@ def addCart(request,product_id):
           value = request.POST[key]
           variation=Variation.objects.get(product=product,variation_category__iexact=key,variation_value__iexact=value)
 
+          #lo agrego a la lista
           product_variation.append(variation)
       # creo u obtengo el carrito del usuario, si si se crea, utiliza la funcion de cart_id, y tiene un "_" al inicio pq sera una funcion solo para este archivo
       cart,creado = Cart.objects.get_or_create(cart_id=_cart_id(request))
 
-      # creo u obtengo el cart_item, le paso el producto, el carrito y el quantity en 1 por si se crea
-      cart_item,creado = CartItem.objects.get_or_create(product=product,cart=cart)
-      
-      if len(product_variation)>0:
-          #limpie los valores que tenga el cart_item
-          cart_item.variations.clear()
-          for item in product_variation:
-              # como es de muchos a muchos, y puede recibir varios valores, se lo agrego asi, llamo al atributo que lo relaciona y con la funcion add le paso el item o variation
-              cart_item.variations.add(item) 
+      # pregunto si el cartitem existe y lo obtengo
+      is_cart_item_exists = CartItem.objects.filter(product=product, cart=cart).exists()
+      if is_cart_item_exists:
+        # obtengo todos los cartItems con ese producto y ese cart
+        cart_item = CartItem.objects.filter(product=product,cart=cart)
 
-      #si no se crea, osea, se obtiene, le sumo 1 al quantity y lo guardo
-      if not creado:
-          cart_item.quantity+=1
+        ex_var_list = []
+        id = []
+        # recorreo cada cartitem
+        for item in cart_item:
+            # obtengo las variantes de ese cartitem
+            existing_variation = item.variations.all()
+            # guardo como un arreglo esas variantes en el arreglo ex_var_list
+            ex_var_list.append(list(existing_variation))
+            # guardo el id del cartitem
+            id.append(item.id)
+        
+        # pregunto si las variantes de ese carrito estan en algun acartitem existente, como el product_variation es un arreglo con las variantes, pregunto si ese arreglo esta dentro de los arreglos que estan dentro de ex_var_list el cual son las combinaciones del cartitem de ese producto
+        if product_variation in ex_var_list:
+            #obtengo el index de esa variante existente, porque se guardaron conjuntamente con el id del item
+            index = ex_var_list.index(product_variation)
+            # obtengo el id del item de esa variante por el index en el ex_var_list
+            item_id = id[index]
+            #obtengo el cartitem expecifico
+            item = CartItem.objects.get(product=product,id=item_id)
+            # si existe, obtengo el cartitem y solo le sumo 1
+            item.quantity+=1
+            item.save()
+        else:
+            # si no existe, creo el cartitem y le agrego las variantes que se mandaron
+            item = CartItem.objects.create(product=product,cart=cart)
+            if len(product_variation)>0:
+            #limpie los valores que tenga el cart_item
+              item.variations.clear()
+              # como ya las tengo en una lista, puedo solamente pasarlo con un * para desempaquetar la lista, y no hacer un for
+              item.variations.add(*product_variation)
+              # for item in product_variation:
+              # como es de muchos a muchos, y puede recibir varios valores, se lo agrego asi, llamo al atributo que lo relaciona y con la funcion add le paso el item o variation
+                # item.variations.add(item)
+            item.save()
+      else:
+          # si no existe un cartitem con ese producto, entonces lo creo y le paso las variantes
+          cart_item = CartItem.objects.create(
+              product=product,
+              cart=cart,
+          )
+          cart_item.variations.clear()
+          cart_item.variations.add(*product_variation)
+
           cart_item.save()
+      #si no se crea, osea, se obtiene, le sumo 1 al quantity y lo guardo
+      # if not creado:
+          # cart_item.quantity+=1
+          # cart_item.save()
 
       # lo redirecciono al carrito
       return redirect('cart')
@@ -49,20 +92,25 @@ class DeleteCart(View):
     def get(self, request, *args, **kwargs):
         cart=Cart.objects.get(cart_id=_cart_id(request))
         product=get_object_or_404(Product, id=self.kwargs.get('product_id'))
-        cart_item=CartItem.objects.get(product=product,cart=cart)
-        if cart_item.quantity > 1:
-            cart_item.quantity -= 1
-            cart_item.save()
-        else:
-            cart_item.delete()
-        # lo redirecciono al carrito
+        cart_item_id=self.kwargs.get('cart_item_id')
+        try:
+          cart_item=CartItem.objects.get(product=product,cart=cart,id=cart_item_id)
+          if cart_item.quantity > 1:
+              cart_item.quantity -= 1
+              cart_item.save()
+          else:
+              cart_item.delete()
+        except:
+            pass
+          # lo redirecciono al carrito
         return redirect('cart')
 
 class DeleteCartItem(View):
     def get(self, request, *args, **kwargs):
         cart=Cart.objects.get(cart_id=_cart_id(request))
         product=get_object_or_404(Product, id=self.kwargs.get('product_id'))
-        cart_item=CartItem.objects.get(product=product,cart=cart)
+        cart_item_id=self.kwargs.get('cart_item_id')
+        cart_item=CartItem.objects.get(product=product,cart=cart,id=cart_item_id)
         cart_item.delete()
 
         # lo redirecciono al carrito
