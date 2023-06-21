@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import redirect, render
 from .models import Account
 from apps.accounts.forms import RegistrationForm
@@ -32,7 +33,11 @@ def register(request):
             user.save()
 
             #proceso para enviar un correo de verificacion
-            current_site = get_current_site(request) # url del sitio
+            current_site = get_current_site(request) # url del sitio, puede ser el localhost o donde lo tenga desplegado
+            if 'WEBSITE_HOSTNAME' in os.environ:
+                current_site = 'https://'+str(current_site)
+            else:
+                current_site = 'http://'+str(current_site)
             mail_subject = "Por favor activa tu cuenta en Yoyo DR" # asunto o titulo
             body = render_to_string('account/account_verification_email.html',{ # creo el html que va a ir en el mensaje
                 # son parametors que iran en el mensaje
