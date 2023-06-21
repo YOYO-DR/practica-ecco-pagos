@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+Hola {{user.first_name}},
+
+Por favor activa tu cuenta dandole click al siguiente link
+{% comment %} Creamos la url de activacion con el dominio actual y la url con sus parametros {% endcomment %}
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+Saludos de Yoyo DR
+
+{% endautoescape %}
