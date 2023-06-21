@@ -107,7 +107,7 @@
             <div class="widget-header">
               <small class="title text-muted">Bienvenido {{user.first_name|capfirst}}!</small>
               <div>
-                <a href="#">Dashboard</a>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
                 <span class="dark-transp"> | </span>
                 <a href="{% url 'logout' %}"> Cerrar sesión</a>
               </div>
