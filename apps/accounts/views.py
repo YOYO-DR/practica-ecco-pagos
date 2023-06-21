@@ -34,6 +34,7 @@ def register(request):
 
             #proceso para enviar un correo de verificacion
             current_site = get_current_site(request) # url del sitio, puede ser el localhost o donde lo tenga desplegado
+            # verifico si estoy en desarrollo o produccion
             if 'WEBSITE_HOSTNAME' in os.environ:
                 current_site = 'https://'+str(current_site)
             else:
