@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect,render
 from django.views.generic import TemplateView, View
 from .models import Cart, CartItem
 from apps.store.models import Product, Variation
@@ -138,3 +138,25 @@ class CartView(TemplateView):
 
         return context
     
+
+class CheckoutView(TemplateView):
+    template_name = 'store/checkout.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        cart = Cart.objects.get(cart_id=_cart_id(self.request))
+        cart_items = CartItem.objects.filter(cart=cart,is_active=True)
+        total=0
+        quantity=0
+        for cart_item in cart_items:
+            total+=cart_item.product.price * cart_item.quantity
+            quantity +=cart_item.quantity
+
+        context["total"] = total
+        context["quantity"] = quantity
+        context["cart_items"] = cart_items
+        context["tax"] = (2*total)/100
+        context["grand_total"] = context["tax"]+total
+
+        return context
