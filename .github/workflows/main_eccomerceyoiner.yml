@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'eccomerceyoiner'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6789FDEEFB424B02B053D593BBBE1F3B }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F9EE9D2D9C124E97A7DE920525E23B86 }}
