@@ -13,6 +13,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage
 from django.views.generic import TemplateView
 
+from apps.carts.views import _cart_id
+from apps.carts.models import CartItem,Cart
+
 # crear contraseña para aplicacion https://support.google.com/accounts/answer/185833?sjid=11686343906281568208-NA
 
 def register(request):
@@ -68,6 +71,17 @@ def login(request):
 
         user = auth.authenticate(email=email, password=password)
         if user is not None:
+            try:
+              cart = Cart.objects.get(cart_id=_cart_id(request))
+              is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+              if is_cart_item_exists:
+                cart_item = CartItem.objects.filter(cart=cart)
+                for item in cart_item:
+                    item.user=user
+                    item.save()
+            except :
+                pass
+
             auth.login(request,user)
             messages.success(request,'Has iniciado sesion exitosamente')
             return redirect('dashboard')

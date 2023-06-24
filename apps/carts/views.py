@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404, redirect,render
 from django.views.generic import TemplateView, View
 from .models import Cart, CartItem
 from apps.store.models import Product, Variation
+from django.utils.decorators import method_decorator # para la vista en el dispatch
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def _cart_id(request): # para generar el codigo del carrito con la key de la sesion del usuario
@@ -116,31 +118,31 @@ class DeleteCartItem(View):
         # lo redirecciono al carrito
         return redirect('cart')
 
-class CartView(TemplateView):
-    template_name = 'store/cart.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        cart = Cart.objects.get(cart_id=_cart_id(self.request))
+def cart(request,total=0,quantity=0,cart_items=None):
+    context={}
+    try: 
+        cart = Cart.objects.get(cart_id=_cart_id(request))
         cart_items = CartItem.objects.filter(cart=cart,is_active=True)
-        total=0
-        quantity=0
         for cart_item in cart_items:
-            total+=cart_item.product.price * cart_item.quantity
-            quantity +=cart_item.quantity
+          total+=cart_item.product.price * cart_item.quantity
+          quantity +=cart_item.quantity
+    except:
+        pass
+    context["total"] = total
+    context["quantity"] = quantity
+    context["cart_items"] = cart_items
+    context["tax"] = (2*total)/100
+    context["grand_total"] = context["tax"]+total
+    return render(request,'store/cart.html',context)
 
-        context["total"] = total
-        context["quantity"] = quantity
-        context["cart_items"] = cart_items
-        context["tax"] = (2*total)/100
-        context["grand_total"] = context["tax"]+total
-
-        return context
-    
-
+#@login_required(login_url='login')
 class CheckoutView(TemplateView):
     template_name = 'store/checkout.html'
+
+    @method_decorator(login_required(login_url='login'))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
