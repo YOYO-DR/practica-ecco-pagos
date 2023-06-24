@@ -76,9 +76,45 @@ def login(request):
               is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
               if is_cart_item_exists:
                 cart_item = CartItem.objects.filter(cart=cart)
+
+                #obtengo las variantes que tiene el producto
+                product_variation=[]
                 for item in cart_item:
-                    item.user=user
-                    item.save()
+                    variation = item.variations.all()
+                    product_variation.append(list(variation))
+                
+                #obtengo los cartitems que tenga el usuario
+                cart_item = CartItem.objects.filter(user=user)
+                ex_var_list=[]
+                id=[]
+                #obtengo en un arreglo las variantes de los cart item que tenga los cartitem del usuario
+                for item in cart_item:
+                    existing_variation = cart_item.variations.all()
+                    ex_var_list.append(list(existing_variation))
+                    id.append(item.id)
+                
+                # product_variation [1,2,3,4,5]
+                # ex_var_list [5,6,7,8]
+
+                #recorreo las variantes del producto
+                for pr in product_variation:
+                    # rpegunto si esa variante esta en la lista de las variantes de los cartitem existentes del usuario
+                    if pr in ex_var_list:
+                        #obtengo el id del item
+                        index=ex_var_list.index(pr)
+                        item_id=id[index]
+                        #busco el item con su id
+                        item=CartItem.objects.get(id=item_id)
+                        # le sumo 1 al cuantity, le asigno el usuairo y guardo
+                        item.quantity+=1
+                        item.user=user
+                        item.save()
+                    #si no esta en los existentes, entonces traigo los cartitem que pertenezcan a la sesion actual o cart, y le asigno el usuario nomas, y guardo
+                    else:
+                        cart_item=CartItem.objects.filter(cart=cart)
+                        for item in cart_item:
+                            item.user=user
+                            item.save()
             except :
                 pass
 
