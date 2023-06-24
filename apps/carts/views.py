@@ -230,9 +230,11 @@ class CheckoutView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        cart = Cart.objects.get(cart_id=_cart_id(self.request))
-        cart_items = CartItem.objects.filter(cart=cart,is_active=True)
+        if self.request.user.is_authenticated:
+            cart_items=CartItem.objects.filter(user=self.request.user,is_active=True)
+        else:
+          cart = Cart.objects.get(cart_id=_cart_id(self.request))
+          cart_items = CartItem.objects.filter(cart=cart,is_active=True)
         total=0
         quantity=0
         for cart_item in cart_items:

@@ -16,6 +16,7 @@ from django.views.generic import TemplateView
 from apps.carts.views import _cart_id
 from apps.carts.models import CartItem,Cart
 
+import requests
 # crear contraseña para aplicacion https://support.google.com/accounts/answer/185833?sjid=11686343906281568208-NA
 
 def register(request):
@@ -81,7 +82,8 @@ def login(request):
                 product_variation=[]
                 for item in cart_item:
                     variation = item.variations.all()
-                    product_variation.append(list(variation))
+                    #le paso la variacion del producto del carrito actual, y que cantidad lleva
+                    product_variation.append([list(variation),item.quantity])
                 
                 #obtengo los cartitems que tenga el usuario
                 cart_item = CartItem.objects.filter(user=user)
@@ -89,7 +91,7 @@ def login(request):
                 id=[]
                 #obtengo en un arreglo las variantes de los cart item que tenga los cartitem del usuario
                 for item in cart_item:
-                    existing_variation = cart_item.variations.all()
+                    existing_variation = item.variations.all()
                     ex_var_list.append(list(existing_variation))
                     id.append(item.id)
                 
@@ -99,14 +101,14 @@ def login(request):
                 #recorreo las variantes del producto
                 for pr in product_variation:
                     # rpegunto si esa variante esta en la lista de las variantes de los cartitem existentes del usuario
-                    if pr in ex_var_list:
+                    if pr[0] in ex_var_list:
                         #obtengo el id del item
-                        index=ex_var_list.index(pr)
+                        index=ex_var_list.index(pr[0])
                         item_id=id[index]
                         #busco el item con su id
                         item=CartItem.objects.get(id=item_id)
                         # le sumo 1 al cuantity, le asigno el usuairo y guardo
-                        item.quantity+=1
+                        item.quantity+=pr[1] #le simo la cantidad que tiene en el carrito en la sesion anonima
                         item.user=user
                         item.save()
                     #si no esta en los existentes, entonces traigo los cartitem que pertenezcan a la sesion actual o cart, y le asigno el usuario nomas, y guardo
@@ -115,12 +117,24 @@ def login(request):
                         for item in cart_item:
                             item.user=user
                             item.save()
-            except :
-                pass
-
+            except Exception as e:
+                print(str(e))
+            #http://127.0.0.1:8000/accounts/login/?next=/cart/checkout/
+            
             auth.login(request,user)
             messages.success(request,'Has iniciado sesion exitosamente')
-            return redirect('dashboard')
+
+            url = request.META.get('HTTP_REFERER') #capturar la url http://127.0.0.1:8000/accounts/login/?next=/cart/checkout/
+            try:
+                query = requests.utils.urlparse(url).query # obtengo los parametros, por ejemplo el next
+                params={x.split('=')[0]:x.split('=')[1] for x in query.split('&')}
+                if 'next' in params:
+                    nextPage=params['next']
+                    return redirect(nextPage)
+            except:
+                # si no encuentra el next
+                return redirect('dashboard')
+
         else:
             messages.error(request,'Las credenciales son incorrectas')
     return render(request,'account/login.html')
