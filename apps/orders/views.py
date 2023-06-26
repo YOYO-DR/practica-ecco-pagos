@@ -3,6 +3,10 @@ from django.shortcuts import redirect, render
 from apps.carts.models import Cart, CartItem
 from apps.orders.models import Order
 from .forms import OrderForm
+
+def payments(request):
+    return render(request,'orders/payment.html')
+
 def place_order(request):
     current_user=request.user
     cart_items = CartItem.objects.filter(user=current_user)
@@ -51,8 +55,17 @@ def place_order(request):
             order_number = current_date + str(data.id)
             data.order_number=order_number
             data.save()
-            return redirect('checkout')
+
+            order = Order.objects.get(user=current_user,is_ordered=False,order_number=order_number)
+            context ={
+                'order':order,
+                'cart_items':cart_items,
+                'total':total,
+                'tax':tax,
+                'grand_total':grand_total,
+            }
+
+            return render(request, 'orders/payment.html',context)
         else:
             return redirect('checkout')
-
 

@@ -59,6 +59,8 @@
     <!-- custom javascript -->
     <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
 
+    <script src="https://www.paypal.com/sdk/js?client-id=AYXFJGHD-traS9Sd2HFP12pa_UANc4mxgzmHbaCO6Fit3Ovmh7iePrNm5jkwfkOqLoeWQZ1Qa0h5qUm5&currency=USD"></script>
+
     <script type="text/javascript">
       /// some script
 
@@ -77,5 +79,8 @@
     {% block content %} 
     {% endblock content %} 
     {% include 'includes/footer.html' %}
+    {% block js %}
+    
+    {% endblock js %}
   </body>
 </html>
