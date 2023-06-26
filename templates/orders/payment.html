@@ -126,6 +126,7 @@
 
 <script>
   // Render the PayPal button into #paypal-button-container
+  var amount = {{grand_total}}
   paypal
     .Buttons({
       style: {
@@ -141,7 +142,7 @@
           purchase_units: [
             {
               amount: {
-                value: "88.44",
+                value: amount,
               },
             },
           ],
