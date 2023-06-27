@@ -2,9 +2,12 @@ import datetime
 from django.shortcuts import redirect, render
 from apps.carts.models import Cart, CartItem
 from apps.orders.models import Order
+from apps.store.models import Product
 from .forms import OrderForm
 from .models import Order, OrderProduct,Payment
 import json
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 def payments(request):
     body = json.loads(request.body)
@@ -33,6 +36,31 @@ def payments(request):
         orderproduct.product_price=item.product.price
         orderproduct.ordered=True
         orderproduct.save()
+        #obtengo el cartitem actual y extraigo las variantes
+        cart_item = CartItem.objects.get(id=item.id)
+        product_variation = cart_item.variations.all()
+        # obtengo el orderproduct actual y le asigno las variantes
+        orderproduct=OrderProduct.objects.get(id=orderproduct.id)
+        orderproduct.variation.set(product_variation)
+        orderproduct.save()
+
+        #obtengo el producto y le mermo el stock del cual se esta comprando
+        product= Product.objects.get(id=item.product_id)
+        product.stock -= item.quantity
+        product.save()
+        # elimino el cart del usuario, osea, todos los cartitems actuales
+
+    CartItem.objects.filter(user=request.user).delete()
+    
+    #email
+    mail_subject="Gracias por tu compra"
+    body=render_to_string('orders/order_revieved.html',{
+        'user':request.user,
+        'order':order
+    })
+    to_email = request.user.email
+    send_email = EmailMessage(mail_subject, body, to=[to_email])
+    send_email.send()
 
     return render(request,'orders/payment.html')
 
