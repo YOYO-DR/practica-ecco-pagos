@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
-from config.settings import MEDIA_URL
+from config.settings import MEDIA_URL, STATIC_URL,DEFAULT_AZURE_PATH
 # practicamente voy a modificar la creacion para super usuario y usuarios
 class MyAccountManager(BaseUserManager):
     # con esto creo el usuario normal, y los pido con esos valores
@@ -84,4 +85,9 @@ class UserProfile(models.Model):
     
     def full_address(self):
         return f'{self.address_line_1} {self.address_line_2}'
+    
+    def get_profile_picture(self):
+        if self.profile_picture:
+            return self.profile_picture.url
+        return DEFAULT_AZURE_PATH+STATIC_URL+'media/img/avatars/picture-user-empty.png'
     

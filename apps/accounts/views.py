@@ -37,6 +37,11 @@ def register(request):
             user.phone_number=phone_number
             user.save()
 
+            # creo el userprofile al usuario cuando se registra
+            profile=UserProfile()
+            profile.user_id=user.id
+            profile.save()
+
             #proceso para enviar un correo de verificacion
             current_site = get_current_site(request) # url del sitio, puede ser el localhost o donde lo tenga desplegado
             # verifico si estoy en desarrollo o produccion

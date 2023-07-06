@@ -177,3 +177,6 @@ STORAGES = {
     "staticfiles": {"BACKEND": "custom_storage.custom_azure.PublicAzureStaticStorage"},
     "media": {"BACKEND": "custom_storage.custom_azure.PublicAzureMediaStorage"},
 }
+
+#ruta del almacenamiento de azure
+DEFAULT_AZURE_PATH='https://djangoyoiner.blob.core.windows.net/eccopagos'

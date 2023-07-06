@@ -28,7 +28,8 @@
               <div class="col-md-6">
                 <div class="card" style="text-align:center;">
                   <div class="card-body">
-                    <img src="{% static 'media/img/avatars/usuario.png' %}" alt="Imagen de perfil" width="50" height="50" style="border-radius:50%">
+                    {% comment %} como tienen una relacion de 1 a 1, puedo obtener su userprofile por el user como su fuera una propiedad de el {% endcomment %}
+                    <img src="{{user.userprofile.get_profile_picture}}" alt="Imagen de perfil" width="50" height="50" style="border-radius:50%">
                     <p class="mb-0">{{user.email}}</p>
                     <p>{{user.phone_number}}</p>
                   </div>
