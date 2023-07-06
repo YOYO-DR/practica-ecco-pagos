@@ -84,7 +84,7 @@
           <h3>Calificación de clientes</h3>
         </header>
 
-        <form action="" method="post">
+        <form action="{% url 'submit_review' single_product.id %}" method="post">
           {% csrf_token %}
           <h5>Escribe tu cometario</h5>
           <div>
@@ -118,33 +118,70 @@
             <input type="text" class="form-control" name="subject">
             <br>
             Comentario:
-            <textarea name="comentario" rows="4" class="form-control"></textarea>
+            <textarea name="review" rows="4" class="form-control"></textarea>
             <br>
+            {% if user.is_authenticated %}
+            {% if orderproduct %}
             <button type="submit" class="btn btn-primary">Enviar comentario</button>
+            {% else %}
+            <p>Debe primero comprar el producto para poder enviar un comentario.</p>
+            {% endif %}
+            {% else %}
+            <p >Para enviar un comentario debes estar registrado <span><a href="{% url 'login' %}">Inicia sesión</a></span>. </p>
+            {% endif %}
           </div>
+          {% include 'includes/alerts.html' %}
         </form>
-
-        <article class="box mb-3">
+      {% for review in reviews %}
+        <article class="box mb-3 mt-3">
           <div class="icontext w-100">
-            <img
-              src="{% static 'media/img/avatars/avatar1.jpg' %}"
-              class="img-xs icon rounded-circle"
-            />
             <div class="text">
-              <span class="date text-muted float-md-right">24.04.2020 </span>
-              <h6 class="mb-1">Mike John</h6>
+              <span class="date text-muted float-md-right">{{review.updated_at}}</span>
+              <h6 class="mb-1">{{review.user.full_name}}</h6>
+              <div class="rating-start">
+                <span>
+                  {% if review.rating == 0.5 %}
+                  <i class="bi bi-star-half" aria-hiddlen="true"></i>
+                  {% elif review.rating >= 1 %}
+                  <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+                  {% endif %}
+                  
+                  {% if review.rating == 1.5 %}
+                  <i class="bi bi-star-half" aria-hiddlen="true"></i>
+                  {% elif review.rating >= 2 %}
+                  <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+                  {% endif %}
+                  
+                  {% if review.rating == 2.5 %}
+                  <i class="bi bi-star-half" aria-hiddlen="true"></i>
+                  {% elif review.rating >= 3 %}
+                  <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+                  {% endif %}
+                  
+                  {% if review.rating == 3.5 %}
+                  <i class="bi bi-star-half" aria-hiddlen="true"></i>
+                  {% elif review.rating >= 4 %}
+                  <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+                  {% endif %}
+                  
+                  {% if review.rating == 4.5 %}
+                  <i class="bi bi-star-half" aria-hiddlen="true"></i>
+                  {% elif review.rating >= 5 %}
+                  <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+                  {% endif %}
+                </span>
+              </div>
             </div>
           </div>
           <!-- icontext.// -->
           <div class="mt-3">
+            <h6>{{review.subject}}</h6>
             <p>
-              Dummy comment Lorem ipsum dolor sit amet, consectetur adipisicing
-              elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-              laboris nisi ut aliquip
+              {{review.review}}
             </p>
           </div>
         </article>
+      {% endfor %}
       </div>
       <!-- col.// -->
     </div>

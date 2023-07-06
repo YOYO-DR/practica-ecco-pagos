@@ -57,6 +57,9 @@ class Account(AbstractBaseUser): #para crear los campos de los usuarios, en este
 
     objects=MyAccountManager() # para que pueda utilizar las funciones de crear usuarios y super usuarios
 
+    def full_name(self):
+        return self.first_name+" "+self.last_name
+
     def __str__(self):
         return self.email
 
@@ -65,3 +68,4 @@ class Account(AbstractBaseUser): #para crear los campos de los usuarios, en este
 
     def has_module_perms(self,perm,obj=None): # si es admin tiene algunos permisos
         return self.is_admin
+    
