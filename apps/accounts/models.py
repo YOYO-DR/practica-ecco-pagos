@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
+from config.settings import MEDIA_URL
 # practicamente voy a modificar la creacion para super usuario y usuarios
 class MyAccountManager(BaseUserManager):
     # con esto creo el usuario normal, y los pido con esos valores
@@ -68,4 +69,19 @@ class Account(AbstractBaseUser): #para crear los campos de los usuarios, en este
 
     def has_module_perms(self,perm,obj=None): # si es admin tiene algunos permisos
         return self.is_admin
+
+class UserProfile(models.Model):
+    user=models.OneToOneField(Account,on_delete=models.CASCADE)
+    address_line_1=models.CharField(max_length=100,blank=True)
+    address_line_2=models.CharField(max_length=100,blank=True)
+    profile_picture=models.ImageField(blank=True,upload_to=f'{MEDIA_URL}/userprofile')
+    city=models.CharField(max_length=20,blank=True)
+    state=models.CharField(max_length=20,blank=True)
+    country=models.CharField(max_length=20,blank=True)
+
+    def __str__(self):
+        return self.user.first_name
+    
+    def full_address(self):
+        return f'{self.address_line_1} {self.address_line_2}'
     

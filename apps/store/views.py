@@ -42,9 +42,11 @@ class ProductDetailView(TemplateView):
           single_product=get_object_or_404(Product,category__slug=self.kwargs.get('category_slug'),slug=self.kwargs.get('product_slug'))
 
           in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(self.request),product=single_product).exists()
-
-          orderproduct=OrderProduct.objects.filter(user=self.request.user,product_id=single_product.id).exists()
-          if not orderproduct:
+          if self.request.user.is_authenticated:
+            orderproduct=OrderProduct.objects.filter(user=self.request.user,product_id=single_product.id).exists()
+            if not orderproduct:
+              orderproduct=None
+          else:
               orderproduct=None
           
           reviews = ReviewRating.objects.filter(product_id=single_product.id,status=True)

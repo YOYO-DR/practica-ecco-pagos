@@ -150,7 +150,6 @@
                 <a href="{{product.get_url}}">
                   <img src="{{product.images.url}}" />
                 </a>
-                
               </div>
               <!-- img-wrap.// -->
               <figcaption class="info-wrap">
@@ -164,10 +163,6 @@
                   </div>
                   <!-- price-wrap.// -->
                 </div>
-                {% if request.user.is_authenticated %}
-            <a href="{% url 'add_cart' product.id %}" class="btn btn-block btn-success">Agregar al Carrito</a>
-            {% endif %}
-
               </figcaption>
             </figure>
           </div>
