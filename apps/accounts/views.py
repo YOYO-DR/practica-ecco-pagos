@@ -248,6 +248,7 @@ def my_orders(request):
     }
     return render(request,'account/my_orders.html', context)
 
+@login_required(login_url='login')
 def edit_profile(request):
     userprofile=get_object_or_404(UserProfile,user=request.user)
     if request.method == 'POST':
@@ -267,3 +268,28 @@ def edit_profile(request):
         'userprofile':userprofile
     }
     return render(request,'account/edit_profile.html',context)
+
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user=Account.objects.get(username__exact=request.user.username)
+        if new_password==confirm_password:
+            success=user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                auth.login(request,user)
+
+                messages.success(request,"La contraseña se actualizo exitosamente")
+                return redirect('change_password')
+            else:
+                messages.error(request,"Porfavor ingrese un password valido")
+                return redirect('change_password')
+        else:
+            messages.error(request,"La contraseña no coincide con la confirmación de la contraseña")
+            return redirect('change_password')
+    return render(request, 'account/change_password.html')
