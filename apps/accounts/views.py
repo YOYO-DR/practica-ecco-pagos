@@ -229,8 +229,11 @@ def resetPassword(request):
         confirm_password = request.POST.get('confirm_password')
 
         if password == confirm_password:
-            uid = request.session.get('uid')
-            user=Account.objects.get(pk=uid)
+            try:
+              uid = request.session.get('uid')
+              user=Account.objects.get(pk=uid)
+            except:
+                return redirect('store')
             user.set_password(password) # cambiar contraseña
             user.save()
             messages.success(request,'El password se reseteo correctamente')
