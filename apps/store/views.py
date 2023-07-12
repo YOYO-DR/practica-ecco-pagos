@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from apps.carts.models import CartItem
 from apps.carts.views import _cart_id
 from apps.store.forms import ReviewForm
-from .models import Product, ReviewRating
+from .models import Product, ProductGallery, ReviewRating
 from apps.category.models import Category
 from django.core.paginator import EmptyPage,PageNotAnInteger, Paginator
 from django.db.models import Q
@@ -51,10 +51,13 @@ class ProductDetailView(TemplateView):
           
           reviews = ReviewRating.objects.filter(product_id=single_product.id,status=True)
 
+          product_gallery = ProductGallery.objects.filter(product_id=single_product.id)
+
           context["single_product"] = single_product
           context["in_cart"] = in_cart
           context["orderproduct"] = orderproduct
           context["reviews"] = reviews
+          context["product_gallery"] = product_gallery
       return context
   
 class SearchView(TemplateView):

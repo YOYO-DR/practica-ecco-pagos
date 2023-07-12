@@ -7,10 +7,18 @@
         <aside class="col-md-6">
           <article class="gallery-wrap">
             <div class="img-big-wrap">
-              <a href="#"><img src="{{single_product.images.url}}" /></a>
+              <img class="mainImage" src="{{single_product.images.url}}" />
             </div>
             <!-- img-big-wrap.// -->
           </article>
+          <ul class="thumb">
+            <li>
+              <a href="{{single_product.images.url}}" target="mainImage"><img src="{{single_product.images.url}}" alt=""></a>
+              {% for i in product_gallery %}
+              <a href="{{i.image.url}}" target="mainImage"><img src="{{i.image.url}}" alt=""></a>
+              {% endfor %}
+            </li>
+          </ul>
           <!-- gallery-wrap .end// -->
         </aside>
         <main class="col-md-6 border-left">
@@ -287,3 +295,20 @@
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 {% endblock content %}
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const thumb = document.querySelectorAll(".thumb a img")
+    const imagenP = document.querySelector(".mainImage")
+    thumb.forEach(function(image){
+      image.addEventListener("click",function (e) {
+      e.preventDefault()
+      let src = this.getAttribute("src")
+      console.log(src)
+      imagenP.setAttribute("src", src)
+    })
+    })
+    
+  })
+</script>
+{% endblock js %}
