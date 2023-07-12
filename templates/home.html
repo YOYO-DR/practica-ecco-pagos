@@ -37,6 +37,52 @@
           <figcaption class="info-wrap">
             <a href="{{product.get_url}}" class="title">{{product.product_name}}</a>
             <div class="price mt-1">${{product.price}}</div>
+            <div class="rating-start">
+            <span>
+              {% if product.averageReview < 0.5 %}
+              <i class="bi bi-star" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 0.5 and product.averageReview < 1 %}
+              <i class="bi bi-star-half" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 1 %}
+              <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+              {% endif %}
+
+              {% if product.averageReview < 1.5 %}
+              <i class="bi bi-star" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 1.5 and product.averageReview < 2 %}
+              <i class="bi bi-star-half" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 2 %}
+              <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+              {% endif %}
+              
+              
+              {% if product.averageReview < 2.5 %}
+              <i class="bi bi-star" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 2.5 and product.averageReview < 3 %}
+              <i class="bi bi-star-half" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 3 %}
+              <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+              {% endif %}
+
+
+              {% if product.averageReview < 3.5 %}
+              <i class="bi bi-star" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 3.5 and product.averageReview < 4 %}
+              <i class="bi bi-star-half" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 4 %}
+              <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+              {% endif %}
+
+              {% if product.averageReview < 4.5 %}
+              <i class="bi bi-star" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 4.5 and product.averageReview < 5 %}
+              <i class="bi bi-star-half" aria-hiddlen="true"></i>
+              {% elif product.averageReview >= 5 %}
+              <i class="bi bi-star-fill" aria-hiddlen="true"></i>
+              {% endif %}
+              
+            </span>
+          </div>
             <!-- price-wrap.// -->
           </figcaption>
         </div>

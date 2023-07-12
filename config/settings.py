@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i3bp+_kdg9o=r4xys3lcq+8vi(nb_k2!e60%*fd-9li4*u#nv1'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -56,7 +56,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # tiempo de sesion - install django-session-timeout
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
 ]
+# tiempo
+SESSION_EXPIRE_SECONDS=3600 # 1 hr
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY=True
+# a donde
+SESSION_TIMEOUT_REDIRECT_SECONDS='accounts/login'
 
 ROOT_URLCONF = 'config.urls'
 
