@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from .db import MYSQL
+from .db import MYSQL, SQLITE
 import os
 from django.contrib.messages import constants as messages
 
@@ -94,7 +94,7 @@ AUTH_USER_MODEL = 'accounts.Account'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = MYSQL
+DATABASES = SQLITE
 
 
 # Password validation

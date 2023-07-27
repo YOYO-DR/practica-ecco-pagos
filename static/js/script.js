@@ -1,61 +1,56 @@
-// some scripts
+document.addEventListener("DOMContentLoaded", function () {
+  // JavaScript code
 
-// jquery ready start
-$(document).ready(function() {
-	// jQuery code
-
-
-    /* ///////////////////////////////////////
+  /* ///////////////////////////////////////
 
     THESE FOLLOWING SCRIPTS ONLY FOR BASIC USAGE, 
-    For sliders, interactions and other
+    For sliders, interactions, and other
 
     */ ///////////////////////////////////////
-    
 
-	//////////////////////// Prevent closing from click inside dropdown
-    $(document).on('click', '.dropdown-menu', function (e) {
+  //////////////////////// Prevent closing from click inside dropdown
+  document.querySelectorAll(".dropdown-menu").forEach(function (dropdown) {
+    dropdown.addEventListener("click", function (e) {
       e.stopPropagation();
     });
+  });
 
-
-    $('.js-check :radio').change(function () {
-        var check_attr_name = $(this).attr('name');
-        if ($(this).is(':checked')) {
-            $('input[name='+ check_attr_name +']').closest('.js-check').removeClass('active');
-            $(this).closest('.js-check').addClass('active');
-           // item.find('.radio').find('span').text('Add');
-
-        } else {
-            item.removeClass('active');
-            // item.find('.radio').find('span').text('Unselect');
-        }
+  document.querySelectorAll(".js-check :radio").forEach(function (radio) {
+    radio.addEventListener("change", function () {
+      var check_attr_name = radio.getAttribute("name");
+      if (radio.checked) {
+        document
+          .querySelectorAll('input[name="' + check_attr_name + '"]')
+          .forEach(function (el) {
+            el.closest(".js-check").classList.remove("active");
+          });
+        radio.closest(".js-check").classList.add("active");
+        // item.find('.radio').find('span').textContent = 'Add';
+      } else {
+        radio.closest(".js-check").classList.remove("active");
+        // item.find('.radio').find('span').textContent = 'Unselect';
+      }
     });
+  });
 
-
-    $('.js-check :checkbox').change(function () {
-        var check_attr_name = $(this).attr('name');
-        if ($(this).is(':checked')) {
-            $(this).closest('.js-check').addClass('active');
-           // item.find('.radio').find('span').text('Add');
-        } else {
-            $(this).closest('.js-check').removeClass('active');
-            // item.find('.radio').find('span').text('Unselect');
-        }
+  document.querySelectorAll(".js-check :checkbox").forEach(function (checkbox) {
+    checkbox.addEventListener("change", function () {
+      var check_attr_name = checkbox.getAttribute("name");
+      if (checkbox.checked) {
+        checkbox.closest(".js-check").classList.add("active");
+        // item.find('.radio').find('span').textContent = 'Add';
+      } else {
+        checkbox.closest(".js-check").classList.remove("active");
+        // item.find('.radio').find('span').textContent = 'Unselect';
+      }
     });
+  });
 
-
-
-	//////////////////////// Bootstrap tooltip
-	if($('[data-toggle="tooltip"]').length>0) {  // check if element exists
-		$('[data-toggle="tooltip"]').tooltip()
-	} // end if
-
-
-
-
-    
-}); 
-// jquery end
-
-
+  //////////////////////// Bootstrap tooltip
+  var tooltips = document.querySelectorAll('[data-toggle="tooltip"]');
+  if (tooltips.length > 0) {
+    tooltips.forEach(function (tooltip) {
+      new bootstrap.Tooltip(tooltip);
+    });
+  }
+});
